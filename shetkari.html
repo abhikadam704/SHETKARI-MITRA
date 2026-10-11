@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="mr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>शेतकरी मित्र - Shetkari Mitra App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="h-full bg-slate-100 flex justify-center items-center p-0 sm:p-4">
+
+    <div id="appContainer" class="w-full sm:max-w-md h-full sm:h-[90vh] bg-emerald-50 sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden relative border border-emerald-200">
+        
+        <!-- ================= 1. SPLASH / WELCOME SCREEN ================= -->
+        <div id="screenSplash" class="absolute inset-0 bg-gradient-to-b from-emerald-700 to-emerald-900 flex flex-col justify-between p-6 text-white z-20 transition-all duration-500">
+            <div class="flex-1 flex flex-col items-center justify-center text-center mt-10">
+                <div class="w-28 h-28 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border-2 border-emerald-300 shadow-xl mb-6 animate-pulse">
+                    <i data-lucide="sprout" class="w-16 h-16 text-emerald-300"></i>
+                </div>
+                <h1 class="text-3xl font-bold tracking-wide mb-2 text-emerald-100">शेतकरी मित्र</h1>
+                <p class="text-lg font-medium text-emerald-200 mb-6">शेतीचा प्रत्येक निर्णय, आता तुमच्या मोबाईलवर!</p>
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-emerald-500/30 text-sm text-emerald-100 max-w-xs">
+                    🌾 आधुनिक शेती, अचूक हवामान, बाजारभाव आणि शेती व्यवस्थापनासाठी आपले स्वागत आहे.
+                </div>
+            </div>
+            <div class="pb-6">
+                <button onclick="goToLogin()" class="w-full bg-amber-400 hover:bg-amber-500 text-emerald-950 font-bold py-4 px-6 rounded-2xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2 text-lg">
+                    <span>सुरू करा (Get Started)</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= 2. MOBILE NUMBER LOGIN SCREEN ================= -->
+        <div id="screenLogin" class="absolute inset-0 bg-white flex flex-col justify-between p-6 z-10 hidden transition-all duration-300">
+            <div>
+                <button onclick="backToSplash()" class="text-emerald-800 p-2 rounded-full hover:bg-emerald-50 mb-4 inline-flex items-center gap-1 text-sm font-medium">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> मागे
+                </button>
+                <div class="text-center mt-6">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-emerald-700 shadow-sm">
+                        <i data-lucide="phone-call" class="w-8 h-8"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">मोबाईल नंबर लॉगइन</h2>
+                    <p class="text-slate-500 text-sm mt-1">तुमचा १० अंकी मोबाईल नंबर प्रविष्ट करा</p>
+                </div>
+
+                <div class="mt-8 space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">मोबाईल नंबर (Mobile Number)</label>
+                        <div class="flex items-center border-2 border-emerald-200 rounded-2xl bg-emerald-50/50 focus-within:border-emerald-600 px-4 py-3">
+                            <span class="text-slate-500 font-semibold mr-2">+91</span>
+                            <input type="tel" id="mobileInput" maxlength="10" placeholder="9876543210" class="w-full bg-transparent outline-none text-slate-800 font-medium text-lg">
+                        </div>
+                    </div>
+                    <button onclick="requestOtp()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-4 rounded-2xl shadow-md transition-all">
+                        OTP पाठवा (Send OTP)
+                    </button>
+                </div>
+            </div>
+            <div class="text-center pb-4 text-xs text-slate-400">
+                सुरक्षित आणि खात्रीशीर सेवा • शेतकरी हितासाठी समर्पित
+            </div>
+        </div>
+
+        <!-- ================= 3. OTP VERIFICATION SCREEN ================= -->
+        <div id="screenOtp" class="absolute inset-0 bg-white flex flex-col justify-between p-6 z-10 hidden">
+            <div>
+                <button onclick="backToLogin()" class="text-emerald-800 p-2 rounded-full hover:bg-emerald-50 mb-4 inline-flex items-center gap-1 text-sm font-medium">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> बदल करा
+                </button>
+                <div class="text-center mt-6">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-emerald-700">
+                        <i data-lucide="shield-check" class="w-8 h-8"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">OTP पडताळणी</h2>
+                    <p class="text-slate-500 text-sm mt-1"><span id="displayMobile" class="font-bold text-emerald-700"></span> वर पाठवलेला कोड टाка</p>
+                    <div class="mt-2 inline-block bg-amber-100 text-amber-800 text-xs px-3 py-1 rounded-full font-medium">
+                        (कोणताही ४ अंकी कोड टाका किंवा इन्स्टंट व्हेरिफाय करा)
+                    </div>
+                </div>
+
+                <div class="mt-8 space-y-6">
+                    <div class="flex justify-center gap-3">
+                        <input type="text" maxlength="1" class="otp-box w-14 h-14 text-center text-2xl font-bold border-2 border-emerald-300 rounded-xl bg-emerald-50 focus:border-emerald-700 outline-none" value="1">
+                        <input type="text" maxlength="1" class="otp-box w-14 h-14 text-center text-2xl font-bold border-2 border-emerald-300 rounded-xl bg-emerald-50 focus:border-emerald-700 outline-none" value="2">
+                        <input type="text" maxlength="1" class="otp-box w-14 h-14 text-center text-2xl font-bold border-2 border-emerald-300 rounded-xl bg-emerald-50 focus:border-emerald-700 outline-none" value="3">
+                        <input type="text" maxlength="1" class="otp-box w-14 h-14 text-center text-2xl font-bold border-2 border-emerald-300 rounded-xl bg-emerald-50 focus:border-emerald-700 outline-none" value="4">
+                    </div>
+                    <button onclick="verifyOtp()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-4 rounded-2xl shadow-md transition-all">
+                        पडताळणी करा आणि पुढे चला (Verify)
+                    </button>
+                </div>
+            </div>
+            <div class="text-center pb-4 text-xs text-slate-400">
+                पुन्हा OTP पाठवा? <span class="text-emerald-700 font-semibold cursor-pointer" onclick="alert('नवीन OTP पाठवला आहे!')">येथे क्लिक करा</span>
+            </div>
+        </div>
+
+        <!-- ================= 4. PROFILE CREATION SCREEN ================= -->
+        <div id="screenProfile" class="absolute inset-0 bg-white flex flex-col justify-between p-6 z-10 hidden overflow-y-auto">
+            <div>
+                <div class="text-center mt-6 mb-6">
+                    <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3 text-emerald-700 shadow-inner">
+                        <i data-lucide="user-pen" class="w-10 h-10"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">शेतकरी प्रोफाइल तयार करा</h2>
+                    <p class="text-slate-500 text-sm mt-1">तुमच्या शेतीनुसार अचूक माहिती मिळवण्यासाठी</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">शेतकऱ्याचे पूर्ण नाव (Full Name)</label>
+                        <input type="text" id="profileName" placeholder="उदा. संतोष पांडुरंग पाटील" class="w-full border-2 border-emerald-200 rounded-2xl px-4 py-3 bg-emerald-50/50 focus:border-emerald-700 outline-none text-slate-800 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">जिल्हा (District)</label>
+                        <select id="profileDistrict" class="w-full border-2 border-emerald-200 rounded-2xl px-4 py-3 bg-emerald-50/50 focus:border-emerald-700 outline-none text-slate-800 font-medium">
+                            <option value="">जिल्हा निवडा</option>
+                            <option value="छत्रपती संभाजीनगर (औंरंगाबाद)">छत्रपती संभाजीनगर (औंरंगाबाद)</option>
+                            <option value="जालना">जालना</option>
+                            <option value="बीड">बीड</option>
+                            <option value="नांदेड">नांदेड</option>
+                            <option value="परभणी">परभणी</option>
+                            <option value="पुणे">पुणे</option>
+                            <option value="नाशिक">नाशिक</option>
+                            <option value="नागपूर">नागपूर</option>
+                            <option value="अहमदनगर">अहमदनगर</option>
+                            <option value="जळगाव">जळगाव</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">मुख्य पीक (Primary Crop)</label>
+                        <select id="profileCrop" class="w-full border-2 border-emerald-200 rounded-2xl px-4 py-3 bg-emerald-50/50 focus:border-emerald-700 outline-none text-slate-800 font-medium">
+                            <option value="">मुख्य पीक निवडा</option>
+                            <option value="कापूस (Cotton)">कापूस (Cotton)</option>
+                            <option value="सोयाबीन (Soybean)">सोयाबीन (Soybean)</option>
+                            <option value="तूर (Pigeon Pea)">तूर (Pigeon Pea)</option>
+                            <option value="बाजरी (Bajra)">बाजरी (Bajra)</option>
+                            <option value="मका (Maize)">मका (Maize)</option>
+                            <option value="ऊस (Sugarcane)">ऊस (Sugarcane)</option>
+                        </select>
+                    </div>
+                    <button onclick="saveProfileData()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-4 rounded-2xl shadow-md transition-all mt-4">
+                        माहिती जतन करा आणि डॅशबोर्ड उघडा 🌾
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 5. HOME DASHBOARD (MAIN APP) ================= -->
+        <div id="screenHome" class="flex-1 flex flex-col h-full bg-slate-50 overflow-hidden hidden">
+            
+            <!-- Top Header -->
+            <div class="bg-gradient-to-r from-emerald-800 to-emerald-900 text-white p-5 pt-6 shadow-md rounded-b-3xl">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 bg-amber-400 rounded-full flex items-center justify-center text-emerald-950 font-bold text-lg shadow">
+                            <span id="userInitial">श</span>
+                        </div>
+                        <div>
+                            <h3 id="dashWelcomeName" class="font-bold text-lg text-emerald-50">शेतकरी बंधू</h3>
+                            <p id="dashDistrict" class="text-xs text-emerald-200 flex items-center gap-1">
+                                <i data-lucide="map-pin" class="w-3 h-3"></i> जिल्हा: --
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openProfileEdit()" class="bg-emerald-700/80 hover:bg-emerald-700 p-2.5 rounded-full border border-emerald-600 text-emerald-100 transition-all">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </button>
+                        <button onclick="logoutApp()" class="bg-rose-900/60 hover:bg-rose-900 p-2.5 rounded-full border border-rose-700 text-rose-100 transition-all" title="लॉग आउट">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Weather Ticker / Banner -->
+                <div class="bg-emerald-950/40 border border-emerald-600/40 rounded-2xl p-3.5 flex items-center justify-between backdrop-blur-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="text-3xl">⛅</div>
+                        <div>
+                            <div class="text-xs text-emerald-300 font-medium">आजचा हवामान अंदाज</div>
+                            <div class="text-sm font-bold text-white">तापमान ३२°C • अंशतः ढगाळ</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-amber-300 font-bold">पावसाची शक्यता</div>
+                        <div class="text-xs text-emerald-200">२०% (हलकी सर)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable Features Grid Container -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-4 hide-scrollbar">
+                
+                <div class="flex justify-between items-center">
+                    <h4 class="font-bold text-slate-700 text-base">सर्व कृषी सेवा व साधने</h4>
+                    <span class="text-xs text-emerald-700 font-semibold bg-emerald-100 px-2.5 py-1 rounded-full">१० सेवा उपलब्ध</span>
+                </div>
+
+                <!-- 8 Core Grid Features -->
+                <div class="grid grid-cols-2 gap-3.5">
+                    
+                    <!-- 1. पिक मार्गदर्शन -->
+                    <div onclick="openFeatureModal('crop')" class="bg-white p-4 rounded-2xl shadow-sm hover:shadow-md border border-emerald-100 flex flex-col items-center text-center cursor-pointer transition-all active:scale-95 group">
+                        <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mb-3 text-emerald-700 group-hover:bg-emerald-700 group-hover:text-white transition-all">
+                            <i data-lucide="sprout" class="w-7 h-7"></i>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">पिक मार्गदर्शन</h5>
+                        <p class="text-[11px] text-slate-500 mt-0.5">खत, पाणी व फवारणी नियोजन</p>
+                    </div>
+
+                    <!-- 2. हवामान -->
+                    <div onclick="openFeatureModal('weather')" class="bg-white p-4 rounded-2xl shadow-sm hover:shadow-md border border-sky-100 flex flex-col items-center text-center cursor-pointer transition-all active:scale-95 group">
+                        <div class="w-14 h-14 bg-sky-100 rounded-2xl flex items-center justify-center mb-3 text-sky-700 group-hover:bg-sky-600 group-hover:text-white transition-all">
+                            <i data-lucide="cloud-sun" class="w-7 h-7"></i>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">हवामान अंदाज</h5>
+                        <p class="text-[11px] text-slate-500 mt-0.5">५ दिवसांचा अचूक अंदाज</p>
+                    </div>
+
+                    <!-- 3. बाजारभाव -->
+                    <div onclick="openFeatureModal('market')" class="bg-white p-4 rounded-2xl shadow-sm hover:shadow-md border border-amber-100 flex flex-col items-center text-center cursor-pointer transition-all active:scale-95 group">
+                        <div class="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center mb-3 text-amber-700 group-hover:bg-amber-600 group-hover:text-white transition-all">
+                            <i data-lucide="trending-up" class="w-7 h-7"></i>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">बाजारभाव</h5>
+                        <p class="text-[11px] text-slate-500 mt-0.5">आजचे मंडी व APMC भाव</p>
+                    </div>
+
+                    <!-- 4. रोग/कीड माहिती -->
+                    <div onclick="openFeatureModal('disease')" class="bg-white p-4 rounded-2xl shadow-sm hover:shadow-md border border-rose-100 flex flex-col items-center text-center cursor-pointer transition-all active:scale-95 group">
+                        <div class="w-14 h-14 bg-rose-100 rounded-2xl flex items-center justify-center mb-3 text-rose-700 group-hover:bg-rose-600 group-hover:text-white transition-all">
+                            <i data-lucide="bug" class="w-7 h-7"></i>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">रोग/कीड माहिती</h5>
+                        <p class="text-[11px] text-slate-500 mt-0.5">फोटो काढून उपाय शोधा</p>
+                    </div>
+
+                    <!-- 5. शेत मोजणी (GPS) -->
+                    <div onclick="openFeatureModal('gps')" class="bg-white p-4 rounded-2xl shadow-sm hover:shadow-md border border-teal-100 flex flex-col items-center text-center cursor-pointer transition-all active:scale-95 group">
+                        <div class="w-14 h-14 bg-teal-100 rounded-2xl flex items-center justify-center mb-3 text-teal-700 group-hover:bg-teal-700 group-hover:text-white transition-all">
+                            <i data-lucide="map" class="w-7 h-7"></i>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">शेत मोजणी (GPS)</h5>
+                        <p class="text-[11px] text-slate-500 mt-0.5">एकरामध्ये क्षेत्र मोजा</p>
+                    </div>
+
+                    <!-- 6. शेती खर्च वही -->
+                    <div onclick="openFeatureModal('expense')" class="bg-white p-4 rounded-2xl shadow-sm hover:shadow-md border border-indigo-100 flex flex-col items-center text-center cursor-pointer transition-all active:scale-95 group">
+                        <div class="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mb-3 text-indigo-700 group-hover:bg-indigo-700 group-hover:text-white transition-all">
+                            <i data-lucide="book-open-check" class="w-7 h-7"></i>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">शेती खर्च वही</h5>
+                        <p class="text-[11px] text-slate-500 mt-0.5">उत्पन्न व खर्चाचा ताळेबंद</p>
+                    </div>
+
+                    <!-- 7. अवजारे / ट्रॅक्टर -->
+                    <div onclick="openFeatureModal('tractor')" class="bg-white p-4 rounded-2xl shadow-sm hover:shadow-md border border-orange-100 flex flex-col items-center text-center cursor-pointer transition-all active:scale-95 group">
+                        <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center mb-3 text-orange-700 group-hover:bg-orange-600 group-hover:text-white transition-all">
+                            <i data-lucide="tractor" class="w-7 h-7"></i>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">अवजारे / ट्रॅक्टर</h5>
+                        <p class="text-[11px] text-slate-500 mt-0.5">भाड्याने अवजारे मिळवा</p>
+                    </div>
+
+                    <!-- 8. कृषी सल्ला -->
+                    <div onclick="openFeatureModal('expert')" class="bg-white p-4 rounded-2xl shadow-sm hover:shadow-md border border-purple-100 flex flex-col items-center text-center cursor-pointer transition-all active:scale-95 group">
+                        <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center mb-3 text-purple-700 group-hover:bg-purple-700 group-hover:text-white transition-all">
+                            <i data-lucide="headset" class="w-7 h-7"></i>
+                        </div>
+                        <h5 class="font-bold text-slate-800 text-sm">कृषी सल्ला</h5>
+                        <p class="text-[11px] text-slate-500 mt-0.5">तज्ज्ञांकडून मोफत मार्गदर्शन</p>
+                    </div>
+
+                </div>
+
+                <!-- Footer Helpline Banner -->
+                <div class="bg-emerald-800 text-white p-4 rounded-2xl flex items-center justify-between shadow">
+                    <div>
+                        <div class="font-bold text-sm">कृषी विभाग हेल्पलाइन</div>
+                        <div class="text-xs text-emerald-200 mt-0.5">टोल फ्री नंबर: 1800-180-1551</div>
+                    </div>
+                    <a href="tel:18001801551" class="bg-amber-400 text-emerald-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1 shadow">
+                        <i data-lucide="phone" class="w-3.5 h-3.5"></i> कॉल करा
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Bottom Navigation Bar -->
+            <div class="bg-white border-t border-slate-200 py-2.5 px-6 flex justify-around items-center text-slate-600">
+                <button onclick="openFeatureModal('crop')" class="flex flex-col items-center text-emerald-700">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-bold mt-1">होम</span>
+                </button>
+                <button onclick="openFeatureModal('weather')" class="flex flex-col items-center hover:text-emerald-700">
+                    <i data-lucide="cloud-sun" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-medium mt-1">हवामान</span>
+                </button>
+                <button onclick="openFeatureModal('market')" class="flex flex-col items-center hover:text-emerald-700">
+                    <i data-lucide="trending-up" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-medium mt-1">बाजारभाव</span>
+                </button>
+                <button onclick="openFeatureModal('expense')" class="flex flex-col items-center hover:text-emerald-700">
+                    <i data-lucide="book-open-check" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-medium mt-1">खर्च वही</span>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- ================= 6. INTERACTIVE FEATURE MODAL ================= -->
+        <div id="featureModal" class="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden transition-all">
+            <div class="bg-white w-full sm:max-w-md h-[85vh] sm:h-auto sm:max-h-[85vh] rounded-t-3xl sm:rounded-3xl flex flex-col overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom duration-300">
+                
+                <!-- Modal Header -->
+                <div class="bg-emerald-800 text-white p-4 flex justify-between items-center">
+                    <div class="flex items-center gap-2.5">
+                        <div id="modalIcon" class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center"></div>
+                        <h3 id="modalTitle" class="font-bold text-lg text-emerald-50">शीर्षक</h3>
+                    </div>
+                    <button onclick="closeFeatureModal()" class="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body Content -->
+                <div id="modalContent" class="p-5 flex-1 overflow-y-auto space-y-4">
+                    <!-- Dynamic content inserted via JavaScript -->
+                </div>
+
+                <!-- Modal Footer Action -->
+                <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+                    <button onclick="closeFeatureModal()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 rounded-xl transition-all">
+                        बंद करा (Close)
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            checkExistingSession();
+        });
+
+        let currentUser = {
+            mobile: '',
+            name: '',
+            district: '',
+            crop: ''
+        };
+
+        function checkExistingSession() {
+            const savedUser = localStorage.getItem('shetkari_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                loadDashboardData();
+                showScreen('screenHome');
+            }
+        }
+
+        function showScreen(screenId) {
+            ['screenSplash', 'screenLogin', 'screenOtp', 'screenProfile', 'screenHome'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function goToLogin() {
+            showScreen('screenLogin');
+        }
+
+        function backToSplash() {
+            showScreen('screenSplash');
+        }
+
+        function backToLogin() {
+            showScreen('screenLogin');
+        }
+
+        function requestOtp() {
+            const mobile = document.getElementById('mobileInput').value.trim();
+            if (mobile.length !== 10 || isNaN(mobile)) {
+                alert('कृपया १० अंकी वैध मोबाईल नंबर प्रविष्ट करा!');
+                return;
+            }
+            currentUser.mobile = mobile;
+            document.getElementById('displayMobile').innerText = '+91 ' + mobile;
+            showScreen('screenOtp');
+        }
+
+        function verifyOtp() {
+            // Instant verification without external gateway
+            showScreen('screenProfile');
+        }
+
+        function saveProfileData() {
+            const name = document.getElementById('profileName').value.trim();
+            const district = document.getElementById('profileDistrict').value;
+            const crop = document.getElementById('profileCrop').value;
+
+            if (!name || !district || !crop) {
+                alert('कृपया सर्व माहिती भरून पूर्ण करा!');
+                return;
+            }
+
+            currentUser.name = name;
+            currentUser.district = district;
+            currentUser.crop = crop;
+
+            localStorage.setItem('shetkari_user', JSON.stringify(currentUser));
+            loadDashboardData();
+            showScreen('screenHome');
+        }
+
+        function loadDashboardData() {
+            document.getElementById('dashWelcomeName').innerText = currentUser.name || 'शेतकरी बंधू';
+            document.getElementById('dashDistrict').innerHTML = `<i data-lucide="map-pin" class="w-3 h-3"></i> जिल्हा: ${currentUser.district || 'महाराष्ट्र'}`;
+            document.getElementById('userInitial').innerText = (currentUser.name && currentUser.name.charAt(0)) ? currentUser.name.charAt(0) : 'श';
+            lucide.createIcons();
+        }
+
+        function openProfileEdit() {
+            document.getElementById('profileName').value = currentUser.name || '';
+            document.getElementById('profileDistrict').value = currentUser.district || '';
+            document.getElementById('profileCrop').value = currentUser.crop || '';
+            showScreen('screenProfile');
+        }
+
+        function logoutApp() {
+            if (confirm('तुम्हाला लॉग आउट करायचे आहे का?')) {
+                localStorage.removeItem('shetkari_user');
+                document.getElementById('mobileInput').value = '';
+                showScreen('screenSplash');
+            }
+        }
+
+        // ================= FEATURE MODAL TEMPLATES =================
+        function openFeatureModal(featureKey) {
+            const modal = document.getElementById('featureModal');
+            const titleEl = document.getElementById('modalTitle');
+            const iconEl = document.getElementById('modalIcon');
+            const contentEl = document.getElementById('modalContent');
+
+            modal.classList.remove('hidden');
+
+            let html = '';
+            let title = '';
+            let iconName = '';
+
+            switch(featureKey) {
+                case 'crop':
+                    title = 'पिक मार्गदर्शन (Crop Guidance)';
+                    iconName = 'sprout';
+                    html = `
+                        <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl">
+                            <h4 class="font-bold text-emerald-900 text-sm mb-1">तुम्ही निवडलेले पीक: ${currentUser.crop || 'सर्वसाधारण'}</h4>
+                            <p class="text-xs text-emerald-700">सध्याच्या हवामानानुसार पिकाची विशेष काळजी घ्या.</p>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+                                <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold">खत व्यवस्थापन</span>
+                                <h5 class="font-bold text-slate-800 text-sm mt-1.5">पहिली खत मात्रा (युरिया व डीएपी)</h5>
+                                <p class="text-xs text-slate-600 mt-1">पेरणीनंतर ३० ते ३५ दिवसांनी ओल असताना युरियाची मात्रा द्यावी.</p>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+                                <span class="text-xs bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full font-bold">पाणी व्यवस्थापन</span>
+                                <h5 class="font-bold text-slate-800 text-sm mt-1.5">पिकास पाणी देण्याची वेळ</h5>
+                                <p class="text-xs text-slate-600 mt-1">फुलोऱ्याच्या अवस्थेत पाण्याचा ताण पडू देऊ नका, तुषार सिंचन वापरा.</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'weather':
+                    title = 'हवामान अंदाज (Weather Forecast)';
+                    iconName = 'cloud-sun';
+                    html = `
+                        <div class="bg-sky-50 border border-sky-200 p-4 rounded-2xl text-center">
+                            <div class="text-4xl mb-1">⛅</div>
+                            <h4 class="font-bold text-sky-900 text-base">${currentUser.district || 'तुमचा जिल्हा'}</h4>
+                            <p class="text-xs text-sky-700">आजचे तापमान: ३२°C • हवामान निरभ्र ते अंशतः ढगाळ</p>
+                        </div>
+                        <div class="space-y-2.5">
+                            <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 text-xs font-medium">
+                                <span class="font-bold text-slate-700">शुक्रवार (उद्या)</span>
+                                <span>🌤️ ३३°C / २३°C</span>
+                                <span class="text-emerald-700 font-bold">पाऊस नाही</span>
+                            </div>
+                            <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 text-xs font-medium">
+                                <span class="font-bold text-slate-700">शनिवार</span>
+                                <span>🌧️ २९°C / २२°C</span>
+                                <span class="text-blue-700 font-bold">हलकी सर (६०%)</span>
+                            </div>
+                            <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 text-xs font-medium">
+                                <span class="font-bold text-slate-700">रविवार</span>
+                                <span>☀️ ३१°C / २१°C</span>
+                                <span class="text-emerald-700 font-bold">कोरडे हवामान</span>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'market':
+                    title = 'बाजारभाव (APMC Market Rates)';
+                    iconName = 'trending-up';
+                    html = `
+                        <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs text-amber-900 font-medium">
+                            📍 ${currentUser.district || 'महाराष्ट्र'} मधील आजचे सरासरी बाजारभाव:
+                        </div>
+                        <div class="space-y-2.5">
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm">
+                                <div>
+                                    <h5 class="font-bold text-slate-800 text-sm">कापूस (Cotton)</h5>
+                                    <p class="text-[11px] text-slate-500">उमरी / जालना बाजार समिती</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-emerald-700 text-sm">₹ 7,250 / क्विंटल</div>
+                                    <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">किमान भाव</span>
+                                </div>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm">
+                                <div>
+                                    <h5 class="font-bold text-slate-800 text-sm">सोयाबीन (Soybean)</h5>
+                                    <p class="text-[11px] text-slate-500">छत्रपती संभाजीनगर बाजार समिती</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-emerald-700 text-sm">₹ 4,800 / क्विंटल</div>
+                                    <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">स्थिर</span>
+                                </div>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm">
+                                <div>
+                                    <h5 class="font-bold text-slate-800 text-sm">तूर (Pigeon Pea)</h5>
+                                    <p class="text-[11px] text-slate-500">लातूर बाजार समिती</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-emerald-700 text-sm">₹ 9,500 / क्विंटल</div>
+                                    <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">तेजी</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'disease':
+                    title = 'रोग/कीड माहिती व निदान';
+                    iconName = 'bug';
+                    html = `
+                        <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl text-center">
+                            <div class="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-2 text-rose-700">
+                                <i data-lucide="camera" class="w-8 h-8"></i>
+                            </div>
+                            <h4 class="font-bold text-rose-900 text-sm">पिकावरील रोगाचा फोटो काढा</h4>
+                            <p class="text-xs text-rose-700 mt-1">पानांवरील डाग किंवा किडीचा फोटो अपलोड करून त्वरित उपाय जाणून घ्या.</p>
+                            <button onclick="alert('कॅमेरा चालू होत आहे... (Demo feature)')" class="mt-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow">
+                                फोटो अपलोड करा / कॅमेरा उघडा
+                            </button>
+                        </div>
+                        <div class="space-y-2.5 mt-3">
+                            <h5 class="font-bold text-slate-700 text-xs">सध्याच्या प्रचलित किडी:</h5>
+                            <div class="bg-white p-3 rounded-xl border border-slate-200">
+                                <h6 class="font-bold text-slate-800 text-xs text-rose-800">बोंडअळी (Pink Bollworm)</h6>
+                                <p class="text-[11px] text-slate-600 mt-0.5">प्रादुर्भाव दिसल्यास फेरोमोन ट्रॅपचा वापर करा आणि कृषी सेवा केंद्राशी संपर्क साधा.</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'gps':
+                    title = 'शेत मोजणी (GPS Field Measurement)';
+                    iconName = 'map';
+                    html = `
+                        <div class="bg-teal-50 border border-teal-200 p-4 rounded-2xl text-center">
+                            <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-2 text-teal-700">
+                                <i data-lucide="map-pin" class="w-8 h-8"></i>
+                            </div>
+                            <h4 class="font-bold text-teal-900 text-sm">जीपीएसद्वारे शेत मोजा</h4>
+                            <p class="text-xs text-teal-700 mt-1">तुमच्या शेताच्या बांधावरून फिरून अचूक क्षेत्र (एकर/गुंठे) मोजा.</p>
+                            <button onclick="alert('GPS मोजणी सुरू झाली आहे. फिरताना शेताचा परिसर ट्रॅक केला जात आहे.')" class="mt-3 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow">
+                                मोजणी सुरू करा (Start GPS)
+                            </button>
+                        </div>
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 text-center">
+                            <div class="text-xs text-slate-500">मागील जतन केलेले क्षेत्र</div>
+                            <div class="text-2xl font-bold text-teal-800 mt-1">2.35 एकर</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5">दिनांक: 12 ऑक्टोबर 2026</div>
+                        </div>
+                    `;
+                    break;
+                case 'expense':
+                    title = 'शेती खर्च वही (Farm Expense Ledger)';
+                    iconName = 'book-open-check';
+                    html = `
+                        <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl flex justify-between items-center">
+                            <div>
+                                <div class="text-xs text-indigo-700 font-medium">एकूण खर्च (Total Spent)</div>
+                                <div class="text-xl font-bold text-indigo-900">₹ 13,700</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-emerald-700 font-medium">अंदाजे उत्पन्न</div>
+                                <div class="text-xl font-bold text-emerald-800">₹ 0 (Pending)</div>
+                            </div>
+                        </div>
+                        <div class="space-y-2 mt-2">
+                            <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 text-xs">
+                                <div>
+                                    <div class="font-bold text-slate-800">बियाणे खरेदी (Seeds)</div>
+                                    <div class="text-[10px] text-slate-400">05-10-2026</div>
+                                </div>
+                                <span class="font-bold text-rose-600">- ₹ 3,200</span>
+                            </div>
+                            <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 text-xs">
+                                <div>
+                                    <div class="font-bold text-slate-800">खते व औषधे (Fertilizer)</div>
+                                    <div class="text-[10px] text-slate-400">08-10-2026</div>
+                                </div>
+                                <span class="font-bold text-rose-600">- ₹ 5,500</span>
+                            </div>
+                            <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 text-xs">
+                                <div>
+                                    <div class="font-bold text-slate-800">ट्रॅक्टर मशागत</div>
+                                    <div class="text-[10px] text-slate-400">10-10-2026</div>
+                                </div>
+                                <span class="font-bold text-rose-600">- ₹ 5,000</span>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'tractor':
+                    title = 'अवजारे व ट्रॅक्टर भाड्याने (Equipment Rental)';
+                    iconName = 'tractor';
+                    html = `
+                        <div class="space-y-3">
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm">
+                                <div>
+                                    <h5 class="font-bold text-slate-800 text-sm">ट्रॅक्टर (4WD 50HP)</h5>
+                                    <p class="text-[11px] text-slate-500">नांगरणी व रोटाव्हेटरसाठी उपलब्ध</p>
+                                    <span class="text-xs text-emerald-700 font-bold mt-1 inline-block">₹ 800 / तास</span>
+                                </div>
+                                <button onclick="alert('मालकाशी संपर्क जोडत आहे: 9822XXXXXX')" class="bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow">
+                                    बुकिंग करा
+                                </button>
+                            </div>
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm">
+                                <div>
+                                    <h5 class="font-bold text-slate-800 text-sm">रोटाव्हेटर (Rotavator)</h5>
+                                    <p class="text-[11px] text-slate-500">माती भुसभुशीत करण्यासाठी</p>
+                                    <span class="text-xs text-emerald-700 font-bold mt-1 inline-block">₹ 600 / तास</span>
+                                </div>
+                                <button onclick="alert('मालकाशी संपर्क जोडत आहे: 9822XXXXXX')" class="bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow">
+                                    बुकिंग करा
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'expert':
+                    title = 'कृषी तज्ज्ञांचा सल्ला (Expert Advice)';
+                    iconName = 'headset';
+                    html = `
+                        <div class="bg-purple-50 border border-purple-200 p-4 rounded-2xl text-center">
+                            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2 text-purple-700">
+                                <i data-lucide="headset" class="w-8 h-8"></i>
+                            </div>
+                            <h4 class="font-bold text-purple-900 text-sm">कृषी विद्यापीठ तज्ज्ञ मार्गदर्शक</h4>
+                            <p class="text-xs text-purple-700 mt-1">तुमच्या पिकांच्या समस्या थेट शास्त्रज्ञांसोबत शेअर करा.</p>
+                            <button onclick="alert('कृषी तज्ज्ञांकडे तुमचा प्रश्न पाठवण्यात आला आहे. ते लवकरच संपर्क साधतील.')" class="mt-3 bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow">
+                                प्रश्न विचारा (Ask Expert)
+                            </button>
+                        </div>
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 text-xs space-y-2">
+                            <div class="font-bold text-slate-800">तज्ज्ञ संपर्क वेळ:</div>
+                            <div class="text-slate-600">सोमवार ते शनिवार: सकाळी ९:०० ते संध्याकाळी ६:००</div>
+                            <div class="text-emerald-700 font-bold">मोफत सल्ला सेवा</div>
+                        </div>
+                    `;
+                    break;
+            }
+
+            titleEl.innerText = title;
+            iconEl.innerHTML = `<i data-lucide="${iconName}" class="w-5 h-5 text-white"></i>`;
+            contentEl.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function closeFeatureModal() {
+            document.getElementById('featureModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
